@@ -1,16 +1,16 @@
+# We use Alpine 3.10 specifically to ensure Docker Scout finds vulnerabilities
 FROM alpine:3.10
 
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libc6-dev \
-    --no-install-recommends
+# Alpine uses 'apk' instead of 'apt-get'
+# We install 'gcc' and 'libc-dev' to compile your C code
+RUN apk add --no-cache gcc libc-dev
 
 WORKDIR /app
 
-# 1. Copy the actual filename
+# Copy your vulnerable C code
 COPY bo_seirass.c .
 
-# 2. Tell GCC to compile the actual filename
-RUN gcc -fno-stack-protector -z execstack -m32 -o vulnerable_app bo_seirass.c
+# Compile for Alpine (which uses musl libc)
+RUN gcc -fno-stack-protector -z execstack -o vulnerable_app bo_seirass.c
 
 ENTRYPOINT ["./vulnerable_app"]
