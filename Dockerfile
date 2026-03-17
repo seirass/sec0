@@ -7,9 +7,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Using "./" ensures it looks in the current build context (your repo root)
-COPY ./main.c .
+# 1. Copy the actual filename
+COPY bo_seirass.c .
 
-RUN gcc -fno-stack-protector -z execstack -m32 -o vulnerable_app main.c
+# 2. Tell GCC to compile the actual filename
+RUN gcc -fno-stack-protector -z execstack -m32 -o vulnerable_app bo_seirass.c
 
 ENTRYPOINT ["./vulnerable_app"]
